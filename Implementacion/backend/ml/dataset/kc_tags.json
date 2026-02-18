@@ -1,0 +1,662 @@
+{
+  "meta": {
+    "version": "1.0",
+    "language": "en",
+    "notes": [
+      "KC IDs are coarse-grained skills intended for mastery tracking (e.g., BKT).",
+      "Fine tags are your original detailed vocabulary; they map into KCs for labeling, filtering, and validation.",
+      "A problem should have exactly one kc_primary (recommended) and optionally kc_secondary inferred from tags."
+    ]
+  },
+  "kcs": {
+    "Numbers.NaturalNumbers": {
+      "description": "Natural numbers, place value, rounding, estimation, and basic properties of operations.",
+      "maps_from_tags": [
+        "Numbers and arithmetic",
+        "natural numbers",
+        "decimal numeration system",
+        "place value",
+        "rounding",
+        "estimation",
+        "order of operations",
+        "properties of operations",
+        "commutative property",
+        "associative property",
+        "distributive property",
+        "powers of 10",
+        "Roman numerals"
+      ]
+    },
+    "Numbers.ExponentsAndRoots": {
+      "description": "Exponentiation, scientific notation, and roots in arithmetic contexts.",
+      "maps_from_tags": [
+        "exponentiation",
+        "scientific notation",
+        "square roots",
+        "cube roots",
+        "n-th roots",
+        "perfect squares",
+        "estimating roots",
+        "negative exponents"
+      ]
+    },
+    "Numbers.FactorsAndDivisibility": {
+      "description": "Divisibility, primes, factorization, GCD/LCM.",
+      "maps_from_tags": [
+        "factors",
+        "multiples",
+        "divisibility rules",
+        "prime numbers",
+        "composite numbers",
+        "prime factorization",
+        "greatest common divisor (GCD)",
+        "least common multiple (LCM)"
+      ]
+    },
+    "Numbers.Integers": {
+      "description": "Integers, negatives, absolute value, ordering, number line.",
+      "maps_from_tags": [
+        "integers",
+        "negative numbers",
+        "absolute value",
+        "opposites",
+        "comparing/ordering numbers",
+        "number line"
+      ]
+    },
+    "Numbers.RationalNumbersFractions": {
+      "description": "Fractions and rational numbers: equivalence, simplification, operations.",
+      "maps_from_tags": [
+        "rational numbers",
+        "fractions",
+        "equivalent fractions",
+        "simplifying fractions",
+        "mixed numbers",
+        "improper fractions",
+        "common denominators",
+        "operations with fractions"
+      ]
+    },
+    "Numbers.DecimalsAndConversion": {
+      "description": "Decimals, operations, repeating/terminating, conversions between fractions and decimals.",
+      "maps_from_tags": [
+        "decimals",
+        "operations with decimals",
+        "terminating decimals",
+        "repeating decimals",
+        "convert fraction ↔ decimal",
+        "convert repeating decimal → fraction",
+        "significant figures"
+      ]
+    },
+    "Numbers.IntervalsAndReals": {
+      "description": "Real numbers, irrational numbers, intervals on the number line.",
+      "maps_from_tags": [
+        "intervals on the number line",
+        "real numbers",
+        "irrational numbers"
+      ]
+    },
+    "Measurement.UnitsAndMetric": {
+      "description": "Metric system, unit conversion, compound units.",
+      "maps_from_tags": [
+        "measurement units",
+        "metric system",
+        "unit conversion",
+        "compound units"
+      ]
+    },
+
+    "Proportionality.RatiosAndProportions": {
+      "description": "Ratios, proportions, direct/inverse proportionality, rule of three, unit rate.",
+      "maps_from_tags": [
+        "Proportionality and financial math",
+        "ratio",
+        "proportion",
+        "direct proportionality",
+        "inverse proportionality",
+        "rule of three",
+        "unit rate"
+      ]
+    },
+    "Proportionality.Percentages": {
+      "description": "Percent calculations and percent change.",
+      "maps_from_tags": [
+        "percentages",
+        "percentage of a quantity",
+        "percentage increase",
+        "percentage decrease",
+        "compound percentages"
+      ]
+    },
+    "FinancialMath.DiscountsTaxesProfit": {
+      "description": "Discounts, taxes, profit/loss contexts.",
+      "maps_from_tags": [
+        "discounts",
+        "taxes",
+        "profit/loss"
+      ]
+    },
+    "FinancialMath.InterestAndAmortization": {
+      "description": "Simple/compound interest and amortization basics.",
+      "maps_from_tags": [
+        "simple interest",
+        "compound interest",
+        "amortization basics"
+      ]
+    },
+
+    "Algebra.ExpressionsBasics": {
+      "description": "Variables, algebraic notation, expression simplification and evaluation.",
+      "maps_from_tags": [
+        "Algebra",
+        "variables",
+        "algebraic notation",
+        "algebraic expressions",
+        "simplifying expressions",
+        "evaluate expressions"
+      ]
+    },
+    "Algebra.MonomialsAndPolynomialsOps": {
+      "description": "Monomials/polynomials operations (add/subtract/multiply/divide).",
+      "maps_from_tags": [
+        "monomials",
+        "operations with monomials",
+        "polynomials",
+        "polynomial addition/subtraction",
+        "polynomial multiplication",
+        "polynomial division (long division)",
+        "special products",
+        "binomial square",
+        "sum by difference product"
+      ]
+    },
+    "Algebra.Factorization": {
+      "description": "Factoring techniques and identities.",
+      "maps_from_tags": [
+        "factorization",
+        "common factor",
+        "difference of squares",
+        "trinomials factoring"
+      ]
+    },
+    "Algebra.RationalExpressions": {
+      "description": "Algebraic fractions and rational algebraic expressions.",
+      "maps_from_tags": [
+        "algebraic fractions",
+        "rational algebraic expressions",
+        "simplifying rational expressions"
+      ]
+    },
+    "Algebra.LinearEquations": {
+      "description": "Solving linear equations and related modeling.",
+      "maps_from_tags": [
+        "equations",
+        "linear equations (first degree)"
+      ]
+    },
+    "Algebra.QuadraticEquations": {
+      "description": "Quadratic equations (including incomplete) and related topics.",
+      "maps_from_tags": [
+        "quadratic equations (second degree)",
+        "incomplete quadratics",
+        "biquadratic equations",
+        "extraneous solutions"
+      ]
+    },
+    "Algebra.RationalAndRadicalEquations": {
+      "description": "Rational and radical equations, handling extraneous solutions.",
+      "maps_from_tags": [
+        "rational equations",
+        "radical equations",
+        "extraneous solutions"
+      ]
+    },
+    "Algebra.Inequalities": {
+      "description": "Linear and quadratic inequalities; solution sets.",
+      "maps_from_tags": [
+        "inequalities",
+        "linear inequalities",
+        "quadratic inequalities"
+      ]
+    },
+    "Algebra.Systems": {
+      "description": "Systems of equations and inequalities (2x2, 3x3, nonlinear).",
+      "maps_from_tags": [
+        "systems of equations",
+        "2×2 linear systems",
+        "3×3 linear systems",
+        "nonlinear systems (linear + quadratic)",
+        "systems of inequalities (graphical)",
+        "feasible region"
+      ]
+    },
+
+    "Sequences.ArithmeticGeometric": {
+      "description": "Sequences, arithmetic/geometric progressions, nth term and sums.",
+      "maps_from_tags": [
+        "Sequences and counting",
+        "sequences",
+        "arithmetic progressions",
+        "geometric progressions",
+        "n-th term",
+        "partial sum"
+      ]
+    },
+    "Counting.CombinatoricsBasics": {
+      "description": "Counting principles, factorial, permutations, combinations.",
+      "maps_from_tags": [
+        "counting principles",
+        "addition rule (counting)",
+        "multiplication rule (counting)",
+        "factorial notation",
+        "permutations",
+        "combinations",
+        "combinatorics"
+      ]
+    },
+
+    "GeometryPlane.LinesAnglesPolygons": {
+      "description": "Basic plane geometry: lines, angles, polygons, triangles, quadrilaterals.",
+      "maps_from_tags": [
+        "Geometry (plane)",
+        "lines",
+        "parallel lines",
+        "perpendicular lines",
+        "segments",
+        "angles",
+        "measuring angles",
+        "adjacent angles",
+        "vertical angles",
+        "polygons",
+        "regular polygons",
+        "triangles",
+        "quadrilaterals"
+      ]
+    },
+    "GeometryPlane.Circles": {
+      "description": "Circle concepts and measurements.",
+      "maps_from_tags": [
+        "circle",
+        "circumference",
+        "radius",
+        "diameter"
+      ]
+    },
+    "GeometryPlane.PerimeterArea": {
+      "description": "Perimeter, area, composite area in plane figures.",
+      "maps_from_tags": [
+        "perimeter",
+        "area",
+        "composite area"
+      ]
+    },
+    "GeometryPlane.PythagorasSimilarity": {
+      "description": "Pythagorean theorem and similarity/scale theorems (Thales).",
+      "maps_from_tags": [
+        "Pythagorean theorem",
+        "Pythagorean converse",
+        "similarity",
+        "scale factor",
+        "scale drawings",
+        "Thales’ theorem",
+        "indirect measurement",
+        "congruence vs similarity"
+      ]
+    },
+    "GeometryPlane.Transformations": {
+      "description": "Translations, rotations, reflections, and congruence/similarity transformations.",
+      "maps_from_tags": [
+        "geometric transformations",
+        "translation",
+        "rotation",
+        "reflection"
+      ]
+    },
+
+    "GeometrySolid.SolidsAndNets": {
+      "description": "Solid geometry: solids recognition, nets, polyhedra properties.",
+      "maps_from_tags": [
+        "Geometry (solid)",
+        "geometric solids",
+        "prisms",
+        "pyramids",
+        "cylinders",
+        "cones",
+        "spheres",
+        "polyhedra (faces/edges/vertices)",
+        "nets of solids"
+      ]
+    },
+    "GeometrySolid.SurfaceAreaVolume": {
+      "description": "Surface area and volume; capacity conversion.",
+      "maps_from_tags": [
+        "surface area",
+        "volume",
+        "capacity unit conversion"
+      ]
+    },
+
+    "Trigonometry.RightTriangle": {
+      "description": "Right-triangle trigonometry, solving right triangles, heights/distances.",
+      "maps_from_tags": [
+        "Trigonometry",
+        "sine",
+        "cosine",
+        "tangent",
+        "right-triangle trigonometry",
+        "solving right triangles",
+        "heights and distances"
+      ]
+    },
+    "Trigonometry.UnitCircleRadians": {
+      "description": "Radians and unit circle; trig functions definitions beyond right triangles.",
+      "maps_from_tags": [
+        "radians",
+        "unit circle"
+      ]
+    },
+    "Trigonometry.IdentitiesEquations": {
+      "description": "Basic trigonometric identities and equations.",
+      "maps_from_tags": [
+        "trigonometric identities",
+        "sin²x + cos²x = 1",
+        "trigonometric equations (basic)"
+      ]
+    },
+    "Trigonometry.LawsOfSinesCosines": {
+      "description": "Law of sines/cosines for oblique triangles.",
+      "maps_from_tags": [
+        "Law of Sines",
+        "Law of Cosines"
+      ]
+    },
+
+    "AnalyticGeometry.Vectors2D3D": {
+      "description": "Vectors in 2D/3D and basic operations; angles between vectors.",
+      "maps_from_tags": [
+        "Vectors and analytic geometry",
+        "vectors (2D)",
+        "vector addition/subtraction",
+        "scalar multiplication",
+        "vectors (3D)",
+        "angle between vectors"
+      ]
+    },
+    "AnalyticGeometry.LinesPlane": {
+      "description": "Lines in the plane, slope, forms, distance, midpoint, parallel/perpendicular conditions.",
+      "maps_from_tags": [
+        "lines in the plane",
+        "slope",
+        "y-intercept",
+        "point-slope form",
+        "parallel/perpendicular conditions",
+        "distance between points",
+        "midpoint formula"
+      ]
+    },
+    "AnalyticGeometry.CirclesConics2D": {
+      "description": "Circle equation and conic sections in 2D coordinate geometry.",
+      "maps_from_tags": [
+        "equation of a circle",
+        "coordinate geometry",
+        "conic sections",
+        "parabola",
+        "ellipse",
+        "hyperbola"
+      ]
+    },
+    "AnalyticGeometry.LinesPlanes3D": {
+      "description": "Lines and planes in space; distances in 3D.",
+      "maps_from_tags": [
+        "lines and planes in space",
+        "distance point-to-plane"
+      ]
+    },
+
+    "Functions.GraphingBasics": {
+      "description": "Cartesian plane, plotting points, tables of values.",
+      "maps_from_tags": [
+        "Functions and calculus",
+        "Cartesian coordinate system",
+        "plotting points",
+        "tables of values"
+      ]
+    },
+    "Functions.CoreConcepts": {
+      "description": "Function concept, notation, domain/range, zeros, parity, symmetry, piecewise.",
+      "maps_from_tags": [
+        "function concept",
+        "function notation",
+        "domain and range",
+        "zeros/roots",
+        "even/odd (parity)",
+        "symmetry",
+        "piecewise functions"
+      ]
+    },
+    "Functions.TransformationsAndComposition": {
+      "description": "Composite and inverse functions.",
+      "maps_from_tags": [
+        "composite functions",
+        "inverse functions"
+      ]
+    },
+    "Functions.FamiliesPolynomialRational": {
+      "description": "Linear/quadratic/polynomial/rational functions and asymptotes.",
+      "maps_from_tags": [
+        "linear functions",
+        "quadratic functions",
+        "polynomial functions",
+        "rational functions",
+        "asymptotes",
+        "vertical asymptotes",
+        "horizontal asymptotes",
+        "oblique asymptotes"
+      ]
+    },
+    "Functions.ExponentialLogarithmic": {
+      "description": "Exponential and logarithmic functions.",
+      "maps_from_tags": [
+        "exponential functions",
+        "logarithmic functions"
+      ]
+    },
+    "Functions.TrigonometricFunctions": {
+      "description": "Trigonometric functions as functions.",
+      "maps_from_tags": [
+        "trigonometric functions (as functions)"
+      ]
+    },
+
+    "Calculus.Limits": {
+      "description": "Limits including one-sided and at infinity.",
+      "maps_from_tags": [
+        "limits",
+        "one-sided limits",
+        "limits at infinity"
+      ]
+    },
+    "Calculus.Continuity": {
+      "description": "Continuity and discontinuities.",
+      "maps_from_tags": [
+        "continuity",
+        "discontinuities"
+      ]
+    },
+    "Calculus.DerivativeDefinitionAndMeaning": {
+      "description": "Derivative definition and interpretations (tangent slope, rate of change).",
+      "maps_from_tags": [
+        "derivative definition (limit of incremental ratio)",
+        "slope of tangent",
+        "rate of change"
+      ]
+    },
+    "Calculus.DifferentiationRules": {
+      "description": "Core differentiation rules (power/product/quotient/chain).",
+      "maps_from_tags": [
+        "differentiation rules",
+        "power rule",
+        "product rule",
+        "quotient rule",
+        "chain rule"
+      ]
+    },
+    "Calculus.TangentLine": {
+      "description": "Equation of tangent line.",
+      "maps_from_tags": [
+        "tangent line equation"
+      ]
+    },
+    "Calculus.AnalysisCriticality": {
+      "description": "Critical points, monotonicity, extrema, concavity, inflection points, curve sketching.",
+      "maps_from_tags": [
+        "critical points",
+        "increasing/decreasing intervals",
+        "local maxima/minima",
+        "second derivative",
+        "concavity",
+        "inflection points",
+        "curve sketching"
+      ]
+    },
+    "Calculus.Applications": {
+      "description": "Optimization and related rates; L'Hôpital where applicable.",
+      "maps_from_tags": [
+        "optimization",
+        "related rates",
+        "L’Hôpital’s rule (possible)"
+      ]
+    },
+    "Calculus.AntiderivativesIntegrals": {
+      "description": "Antiderivatives and integrals; definite integrals and FTC; Riemann concept.",
+      "maps_from_tags": [
+        "antiderivative",
+        "indefinite integrals",
+        "definite integrals",
+        "Riemann sums (concept)",
+        "Fundamental Theorem of Calculus"
+      ]
+    },
+    "Calculus.AreaVolumeByIntegration": {
+      "description": "Area under curve, between curves, and volume by rotation (if included).",
+      "maps_from_tags": [
+        "area under a curve",
+        "area between curves",
+        "volume by integration (rotation solids, possible)"
+      ]
+    },
+
+    "Statistics.DataRepresentation": {
+      "description": "Data collection and visual representations (tables and charts).",
+      "maps_from_tags": [
+        "Statistics, probability, and inference",
+        "data collection",
+        "frequency tables",
+        "grouped data (class intervals)",
+        "bar charts",
+        "line graphs",
+        "pie charts",
+        "histograms",
+        "frequency polygon"
+      ]
+    },
+    "Statistics.DescriptiveMeasures": {
+      "description": "Measures of center and spread; univariate statistics.",
+      "maps_from_tags": [
+        "mean",
+        "median",
+        "mode",
+        "range",
+        "variance (intro/usage)",
+        "standard deviation (intro/usage)",
+        "univariate statistics"
+      ]
+    },
+    "Statistics.BivariateCorrelationRegression": {
+      "description": "Scatter plots, correlation, regression, line of best fit.",
+      "maps_from_tags": [
+        "bivariate statistics",
+        "scatter plot",
+        "correlation",
+        "linear regression",
+        "line of best fit"
+      ]
+    },
+    "Probability.Foundations": {
+      "description": "Basic probability concepts: sample space, events, experimental vs theoretical.",
+      "maps_from_tags": [
+        "probability (basic)",
+        "experimental vs theoretical probability",
+        "sample space",
+        "events"
+      ]
+    },
+    "Probability.RulesAndDependence": {
+      "description": "Addition/multiplication rules, independence, mutual exclusivity, conditional probability.",
+      "maps_from_tags": [
+        "addition rule (probability)",
+        "multiplication rule (probability)",
+        "independent events",
+        "mutually exclusive events",
+        "conditional probability"
+      ]
+    },
+    "Probability.BayesAndExpectation": {
+      "description": "Bayes theorem and expectation value.",
+      "maps_from_tags": [
+        "Bayes’ theorem",
+        "expected value"
+      ]
+    },
+    "Probability.RandomVariablesDistributions": {
+      "description": "Random variables and common distributions (binomial, normal).",
+      "maps_from_tags": [
+        "random variables (discrete)",
+        "probability distributions",
+        "Binomial distribution",
+        "Normal distribution",
+        "normal approximation (possible)"
+      ]
+    },
+    "Statistics.Inference": {
+      "description": "Sampling concepts, confidence intervals, hypothesis testing.",
+      "maps_from_tags": [
+        "sampling methods (intro)",
+        "confidence intervals",
+        "hypothesis testing",
+        "null hypothesis",
+        "alternative hypothesis",
+        "significance level",
+        "p-value"
+      ]
+    },
+
+    "AppliedModeling.MarginalAndElasticity": {
+      "description": "Marginal concepts and elasticity (typically CCSS / applied calculus).",
+      "maps_from_tags": [
+        "Applied optimization and modeling (explicitly mentioned)",
+        "marginal cost",
+        "marginal revenue",
+        "marginal profit",
+        "elasticity of demand"
+      ]
+    },
+    "AppliedModeling.SurplusAreas": {
+      "description": "Consumer/producer surplus as area interpretation.",
+      "maps_from_tags": [
+        "consumer surplus (area interpretation)",
+        "producer surplus (area interpretation)"
+      ]
+    },
+    "AppliedModeling.LinearProgramming": {
+      "description": "Linear programming formulation and solution (corner-point).",
+      "maps_from_tags": [
+        "linear programming",
+        "objective function",
+        "constraints",
+        "corner-point principle"
+      ]
+    }
+  }
+}

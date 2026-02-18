@@ -1,0 +1,26 @@
+[
+    {
+  "source_dataset": "gsm8k",
+  "source_split": "train",
+  "source_index": 123,
+  "course": "2º Bach",
+  "kc": "Derivadas",
+  "tags": ["Derivadas", "Regla del producto"],
+  "difficulty": 3,
+  "statement": "Halla la derivada de f(x) = (ax^2 + bx)(cx + d).",
+  "parameters": {"a": [1,5], "b": [-4,4], "c": [1,4], "d": [-3,3]},
+  "solution_steps": [
+    "Aplica la regla del producto: (uv)' = u'v + uv'.",
+    "u = ax^2+bx ⇒ u' = 2ax + b",
+    "v = cx+d ⇒ v' = c",
+    "f'(x) = (2ax+b)(cx+d) + c(ax^2+bx)",
+    "Simplifica y sustituye parámetros."
+  ],
+  "answer": "f'(x)= (2ax+b)(cx+d) + c(ax^2+bx)"
+  },
+  {
+
+    
+  }
+
+]

@@ -1,0 +1,23 @@
+# Python venv
+env/
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Common tooling
+*.log
+.DS_Store
+.idea/
+.vscode/
+
+# .NET / Visual Studio build outputs
+**/bin/
+**/obj/
+
+# Rider/VS
+.vs/
+.idea/
+.vscode/
