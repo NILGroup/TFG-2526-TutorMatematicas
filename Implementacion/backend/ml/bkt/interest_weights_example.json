@@ -1,0 +1,30 @@
+{
+  "allowed_courses": ["3ESO"],
+  "allowed_modalities": [],
+  "kc_weight_map": {
+    "KC_1": 1.2,
+    "KC_2": 0.6,
+    "KC_3": 1.5
+  },
+  "tag_weight_map": {
+    "tag_a": 1.4,
+    "tag_b": 1.0
+  },
+  "difficulty_policy": {
+    "mean": 3,
+    "min": 1,
+    "max": 4,
+    "trend": "INCREASING"
+  },
+  "session_policy": {
+    "num_problems": 5,
+    "kc_variety_target": 4,
+    "tag_variety_target": 3,
+    "repetition_limit_per_kc": 2
+  },
+  "filter_policy": {
+    "statement_length": ["MEDIUM"],
+    "multi_topic": "ANY",
+    "context": "ANY"
+  }
+}

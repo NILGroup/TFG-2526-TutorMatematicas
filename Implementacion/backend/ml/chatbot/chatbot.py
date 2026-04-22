@@ -71,8 +71,8 @@ Instrucciones:
 """
 
 
-def generate_tutor_answer(problem: Dict[str, Any], student_question: str, current_attempt: Optional[str] = None) -> str:
-    statement = str(problem.get("statement", "")).strip()
+def generate_tutor_answer(problem: Dict[str, Any], student_question: str, rendered_statement, current_attempt: Optional[str] = None) -> str:
+    statement = rendered_statement or str(problem.get("statement", "")).strip()
     steps = problem.get("solution_steps") or []
     answer = str(problem.get("answer", "")).strip()
 

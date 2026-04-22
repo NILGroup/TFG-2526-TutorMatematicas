@@ -17,7 +17,7 @@ Runtime:
 
 from fastapi import FastAPI
 
-from ..app.routes import problems, sessions, tutor
+from app.routes import problems, sessions, tutor, users
 
 
 def create_app() -> FastAPI:
@@ -40,6 +40,7 @@ def create_app() -> FastAPI:
     app.include_router(problems.router)
     app.include_router(sessions.router)
     app.include_router(tutor.router)
+    app.include_router(users.router)
 
     @app.get("/health", tags=["health"])
     def health():

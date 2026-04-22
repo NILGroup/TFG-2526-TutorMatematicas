@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pageModels="clr-namespace:MathTutor.PageModels"
+             xmlns:models="clr-namespace:MathTutor.Models"
+             xmlns:pages="clr-namespace:MathTutor.Pages"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:fonts="clr-namespace:Fonts"
+             x:Class="MathTutor.Pages.SettingsPage"
+             x:DataType="pageModels:SettingsPageModel"
+             Title="Settings">
+
+    <ScrollView>
+        <StackLayout Padding="16" Spacing="12">
+            <Label Text="Ajustes" FontSize="24" FontAttributes="Bold" />
+
+            <Label Text="Problemas diarios" />
+            <Stepper Minimum="1" Maximum="20" Increment="1" Value="{Binding DailyProblemsCount}"/>
+            <Label Text="Cantidad: {Binding DailyProblemsCount}" />
+
+            <Label Text="Dificultad mínima" />
+            <Stepper Minimum="1" Maximum="5" Increment="1" Value="{Binding DifficultyMin}"/>
+            <Label Text="{Binding DifficultyMin}" />
+
+            <Label Text="Dificultad máxima" />
+            <Stepper Minimum="1" Maximum="5" Increment="1" Value="{Binding DifficultyMax}"/>
+            <Label Text="{Binding DifficultyMax}" />
+
+            <Label Text="Preferencia de pistas" />
+            <Picker ItemsSource="{Binding HintOptions}" SelectedItem="{Binding HintsPreference}" />
+
+            <Button Text="Guardar" Command="{Binding SaveSettingsCommand}" />
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

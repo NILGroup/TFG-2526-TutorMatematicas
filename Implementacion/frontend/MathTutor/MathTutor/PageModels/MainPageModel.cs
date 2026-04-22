@@ -1,177 +1,82 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+
 using MathTutor.Models;
+using MathTutor.Services;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Diagnostics;
 
 namespace MathTutor.PageModels
 {
-    public partial class MainPageModel : ObservableObject, IProjectTaskPageModel
+    public partial class MainPageModel : ObservableObject
     {
-        private bool _isNavigatedTo;
-        private bool _dataLoaded;
-        private readonly ProjectRepository _projectRepository;
-        private readonly TaskRepository _taskRepository;
-        private readonly CategoryRepository _categoryRepository;
-        private readonly ModalErrorHandler _errorHandler;
-        private readonly SeedDataService _seedDataService;
+        private readonly ProblemService _problemService;
+        private readonly SessionService _sessionService;
 
         [ObservableProperty]
-        private List<CategoryChartData> _todoCategoryData = [];
+        private ObservableCollection<ProblemOut> recommendedProblems = new();
 
         [ObservableProperty]
-        private List<Brush> _todoCategoryColors = [];
+        private bool hasSession;
 
-        [ObservableProperty]
-        private List<ProjectTask> _tasks = [];
+        private string? _sessionId;
 
-        [ObservableProperty]
-        private List<Project> _projects = [];
-
-        [ObservableProperty]
-        bool _isBusy;
-
-        [ObservableProperty]
-        bool _isRefreshing;
-
-        [ObservableProperty]
-        private string _today = DateTime.Now.ToString("dddd, MMM d");
-
-        [ObservableProperty]
-        private Project? selectedProject;
-
-        public bool HasCompletedTasks
-            => Tasks?.Any(t => t.IsCompleted) ?? false;
-
-        public MainPageModel(SeedDataService seedDataService, ProjectRepository projectRepository,
-            TaskRepository taskRepository, CategoryRepository categoryRepository, ModalErrorHandler errorHandler)
+        public MainPageModel(ProblemService problemService,
+                             SessionService sessionService)
         {
-            _projectRepository = projectRepository;
-            _taskRepository = taskRepository;
-            _categoryRepository = categoryRepository;
-            _errorHandler = errorHandler;
-            _seedDataService = seedDataService;
+            _problemService = problemService;
+            _sessionService = sessionService;
         }
-
-        private async Task LoadData()
-        {
-            try
-            {
-                IsBusy = true;
-
-                Projects = await _projectRepository.ListAsync();
-
-                var chartData = new List<CategoryChartData>();
-                var chartColors = new List<Brush>();
-
-                var categories = await _categoryRepository.ListAsync();
-                foreach (var category in categories)
-                {
-                    chartColors.Add(category.ColorBrush);
-
-                    var ps = Projects.Where(p => p.CategoryID == category.ID).ToList();
-                    int tasksCount = ps.SelectMany(p => p.Tasks).Count();
-
-                    chartData.Add(new(category.Title, tasksCount));
-                }
-
-                TodoCategoryData = chartData;
-                TodoCategoryColors = chartColors;
-
-                Tasks = await _taskRepository.ListAsync();
-            }
-            finally
-            {
-                IsBusy = false;
-                OnPropertyChanged(nameof(HasCompletedTasks));
-            }
-        }
-
-        private async Task InitData(SeedDataService seedDataService)
-        {
-            bool isSeeded = Preferences.Default.ContainsKey("is_seeded");
-
-            if (!isSeeded)
-            {
-                await seedDataService.LoadSeedDataAsync();
-            }
-
-            Preferences.Default.Set("is_seeded", true);
-            await Refresh();
-        }
-
-        [RelayCommand]
-        private async Task Refresh()
-        {
-            try
-            {
-                IsRefreshing = true;
-                await LoadData();
-            }
-            catch (Exception e)
-            {
-                _errorHandler.HandleError(e);
-            }
-            finally
-            {
-                IsRefreshing = false;
-            }
-        }
-
-        [RelayCommand]
-        private void NavigatedTo() =>
-            _isNavigatedTo = true;
-
-        [RelayCommand]
-        private void NavigatedFrom() =>
-            _isNavigatedTo = false;
 
         [RelayCommand]
         private async Task Appearing()
         {
-            if (!_dataLoaded)
+            // Start or refresh the daily session
+            var response = await _sessionService.StartSessionAsync(
+                new StartSessionRequest { UserId = "user123", K = 5 });
+
+            if (response?.ProblemIds != null)
             {
-                await InitData(_seedDataService);
-                _dataLoaded = true;
-                await Refresh();
-            }
-            // This means we are being navigated to
-            else if (!_isNavigatedTo)
-            {
-                await Refresh();
+                _sessionId = response.SessionId;
+                HasSession = true;
+                RecommendedProblems.Clear();
+                foreach (string id in response.ProblemIds)
+                {
+                    var prob = await _problemService.GetProblemByIdAsync(id);
+                    if (prob != null) RecommendedProblems.Add(prob);
+                }
             }
         }
 
         [RelayCommand]
-        private Task TaskCompleted(ProjectTask task)
+        private async Task ContinueSession()
         {
-            OnPropertyChanged(nameof(HasCompletedTasks));
-            return _taskRepository.SaveItemAsync(task);
+            // Safely obtain a current Page from Application windows and use the async API.
+            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
+            if (page != null)
+            {
+                await page.DisplayAlertAsync("Sesión", "Continuar la sesión...", "OK");
+            }
+            else
+            {
+                Debug.WriteLine("ContinueSession: no current Page available to display alert.");
+            }
         }
 
         [RelayCommand]
-        private Task AddTask()
-            => Shell.Current.GoToAsync($"task");
-
-        [RelayCommand]
-        private Task? NavigateToProject(Project project)
-            => project is null ? null : Shell.Current.GoToAsync($"project?id={project.ID}");
-
-        [RelayCommand]
-        private Task NavigateToTask(ProjectTask task)
-            => Shell.Current.GoToAsync($"task?id={task.ID}");
-
-        [RelayCommand]
-        private async Task CleanTasks()
+        private async Task StartProblem(string id)
         {
-            var completedTasks = Tasks.Where(t => t.IsCompleted).ToList();
-            foreach (var task in completedTasks)
+            // Safely obtain a current Page from Application windows and use the async API.
+            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
+            if (page != null)
             {
-                await _taskRepository.DeleteItemAsync(task);
-                Tasks.Remove(task);
+                await page.DisplayAlertAsync("Seleccionado", $"Abrir problema: {id}", "OK");
             }
-
-            OnPropertyChanged(nameof(HasCompletedTasks));
-            Tasks = new(Tasks);
-            await AppShell.DisplayToastAsync("All cleaned up!");
+            else
+            {
+                Debug.WriteLine($"StartProblem: no current Page available to display alert for id={id}.");
+            }
         }
     }
 }

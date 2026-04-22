@@ -6,3 +6,4 @@ pip install datasets
 pip install pymongo
 pip install requests
 pip install fastapi
+pip install "fastapi[standard]"

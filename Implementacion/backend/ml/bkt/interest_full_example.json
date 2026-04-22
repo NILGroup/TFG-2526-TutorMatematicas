@@ -1,0 +1,40 @@
+{
+  "course_level": "3ESO",
+  "modality": null,
+  "allow_cross_course_content": false,
+
+  "primary_objective": "LEARN_NEW_CONTENT",
+  "secondary_objective": null,
+
+  "kc_interest_scores": {
+    "KC_1": 4,
+    "KC_2": 2,
+    "KC_3": 5
+  },
+
+  "tag_interest_scores": {
+    "tag_a": 5,
+    "tag_b": 3
+  },
+
+  "target_difficulty_mean": 3,
+  "difficulty_tolerance": 1,
+  "difficulty_trend": "INCREASING",
+  "min_allowed_difficulty": 1,
+  "max_allowed_difficulty": 4,
+  "challenge_preference": "BALANCED",
+
+  "repetition_preference": "MEDIUM",
+  "statement_length_preference": "MEDIUM",
+  "multi_topic_preference": "NO_PREFERENCE",
+  "context_preference": "NO_PREFERENCE",
+  "solution_length_preference": "MEDIUM_SOLVING",
+
+  "problems_per_session": 5,
+  "sessions_per_week": 4,
+  "session_time_budget_minutes": 20,
+
+  "kc_variety_preference": "HIGH",
+  "tag_variety_preference": "MEDIUM",
+  "include_least_favorite_topics": "SOMETIMES"
+}

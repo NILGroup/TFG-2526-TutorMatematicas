@@ -1,0 +1,9 @@
+{
+  "kc_id": "Numbers.DecimalsAndConversion",
+  "p_learn": 0.15,
+  "p_slip": 0.10,
+  "p_guess": 0.20,
+  "p_know_init": 0.20,
+  "mastery_threshold": 0.90,
+  "updated_at": "2026-03-22T00:00:00Z"
+}

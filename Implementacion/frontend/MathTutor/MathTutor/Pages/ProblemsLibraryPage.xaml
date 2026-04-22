@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pageModels="clr-namespace:MathTutor.PageModels"
+             xmlns:models="clr-namespace:MathTutor.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="MathTutor.Pages.ProblemsLibraryPage"
+             x:Name="ProblemsLibrary"
+             x:DataType="pageModels:ProblemsLibraryPageModel"
+             Title="Problems">
+
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior EventName="Appearing"
+                                        Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+
+    <StackLayout Padding="16" Spacing="10">
+        <Label Text="Biblioteca" FontSize="24" FontAttributes="Bold" />
+        <SearchBar Placeholder="Buscar..."
+                   Text="{Binding SearchQuery, Mode=TwoWay}" />
+
+        <Picker Title="Curso" ItemsSource="{Binding CourseOptions}"
+                SelectedItem="{Binding SelectedCourse}" />
+        <Picker Title="KC" ItemsSource="{Binding KcOptions}"
+                SelectedItem="{Binding SelectedKc}" />
+
+        <Stepper Minimum="1" Maximum="5" Increment="1" Value="{Binding SelectedDifficulty}"/>
+        <Label Text="Dificultad: {Binding SelectedDifficulty}" />
+
+        <CollectionView ItemsSource="{Binding Problems}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0,4" Padding="10"
+                            Stroke="#e0e0e0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <StackLayout>
+                            <Label Text="{Binding Statement}" FontAttributes="Bold" />
+                            <Label Text="Curso: {Binding Course}" FontSize="12" />
+                            <Label Text="Tema: {Binding Kc}" FontSize="12" />
+                        </StackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </StackLayout>
+</ContentPage>

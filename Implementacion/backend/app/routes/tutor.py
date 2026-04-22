@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 from pymongo import MongoClient
 from bson import ObjectId
 
-from ...ml.chatbot.chatbot import generate_tutor_answer
+from ml.chatbot.chatbot import generate_tutor_answer
 
 router = APIRouter(prefix="/tutor", tags=["tutor"])
 
@@ -26,11 +26,11 @@ _problems = _db[COLLECTION_NAME]
 
 # ---------- Request/Response models ----------
 class TutorChatRequest(BaseModel):
-    problem_id: str = Field(..., description="MongoDB _id of the problem document")
-    question: str = Field(..., min_length=1, description="Student question about this problem")
-    # Optional fields you may add later:
+    problem_id: str
+    question: str
     user_id: Optional[str] = None
     current_attempt: Optional[str] = None
+    rendered_statement: Optional[str] = None
 
 
 class TutorChatResponse(BaseModel):
@@ -57,6 +57,7 @@ def tutor_chat(req: TutorChatRequest) -> TutorChatResponse:
             problem=problem,
             student_question=req.question,
             current_attempt=req.current_attempt,
+            rendered_statement=req.rendered_statement,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Chatbot failed: {e}")

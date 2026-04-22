@@ -3,7 +3,13 @@ from __future__ import annotations
 
 import argparse
 
-from ..ml.dataset.transformer import run_pipeline
+import sys
+import os
+
+parent_route = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_route)
+
+from ml.dataset.transformer import run_pipeline
 
 
 def main():

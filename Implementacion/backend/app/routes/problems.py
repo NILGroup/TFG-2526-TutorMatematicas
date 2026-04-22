@@ -33,6 +33,15 @@ def _instantiate_parameters(parameters: Dict[str, Any]) -> Dict[str, int]:
     return inst
 
 
+def _render_statement(statement: str, instantiated_parameters: Dict[str, int]) -> str:
+    text = statement or ""
+
+    for key, value in (instantiated_parameters or {}).items():
+        text = text.replace("{" + key + "}", str(value))
+
+    return text
+
+
 class ProblemOut(BaseModel):
     id: str
     course: Optional[str] = None
@@ -40,8 +49,13 @@ class ProblemOut(BaseModel):
     tags: List[str] = []
     difficulty: Optional[int] = None
     statement: str
+    rendered_statement: str
     parameters: Dict[str, Any] = {}
     instantiated_parameters: Dict[str, int] = {}
+
+class ProblemDetailOut(ProblemOut):
+    solution_steps: List[str] = []
+    answer: Optional[str] = None
 
 
 @router.get("/", response_model=List[ProblemOut])
@@ -66,6 +80,9 @@ def list_problems(
     docs = _problems.find(query).skip(skip).limit(limit)
     out: List[ProblemOut] = []
     for d in docs:
+        instantiated = _instantiate_parameters(d.get("parameters", {}) or {})
+        rendered = _render_statement(d.get("statement", ""), instantiated)
+
         out.append(
             ProblemOut(
                 id=str(d["_id"]),
@@ -74,14 +91,15 @@ def list_problems(
                 tags=d.get("tags", []),
                 difficulty=d.get("difficulty"),
                 statement=d.get("statement", ""),
+                rendered_statement=rendered,
                 parameters=d.get("parameters", {}) or {},
-                instantiated_parameters=_instantiate_parameters(d.get("parameters", {}) or {}),
+                instantiated_parameters=instantiated,
             )
         )
     return out
 
 
-@router.get("/{problem_id}", response_model=ProblemOut)
+@router.get("/{problem_id}", response_model=ProblemDetailOut)
 def get_problem(problem_id: str):
     try:
         oid = ObjectId(problem_id)
@@ -92,13 +110,19 @@ def get_problem(problem_id: str):
     if not d:
         raise HTTPException(status_code=404, detail="Problem not found")
 
-    return ProblemOut(
+    instantiated = _instantiate_parameters(d.get("parameters", {}) or {})
+    rendered = _render_statement(d.get("statement", ""), instantiated)
+
+    return ProblemDetailOut(
         id=str(d["_id"]),
         course=d.get("course"),
         kc=d.get("kc"),
         tags=d.get("tags", []),
         difficulty=d.get("difficulty"),
         statement=d.get("statement", ""),
+        rendered_statement=rendered,
         parameters=d.get("parameters", {}) or {},
-        instantiated_parameters=_instantiate_parameters(d.get("parameters", {}) or {}),
+        instantiated_parameters=instantiated,
+        solution_steps=d.get("solution_steps", []),
+        answer=d.get("answer"),
     )
