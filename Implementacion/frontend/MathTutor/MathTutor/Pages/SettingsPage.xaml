@@ -2,34 +2,143 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pageModels="clr-namespace:MathTutor.PageModels"
-             xmlns:models="clr-namespace:MathTutor.Models"
-             xmlns:pages="clr-namespace:MathTutor.Pages"
-             xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
-             xmlns:fonts="clr-namespace:Fonts"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="MathTutor.Pages.SettingsPage"
              x:DataType="pageModels:SettingsPageModel"
-             Title="Settings">
+             Title="Ajustes">
+
+    <ContentPage.Resources>
+        <toolkit:IsStringNotNullOrEmptyConverter x:Key="IsNotNullOrEmpty" />
+    </ContentPage.Resources>
 
     <ScrollView>
-        <StackLayout Padding="16" Spacing="12">
-            <Label Text="Ajustes" FontSize="24" FontAttributes="Bold" />
+        <VerticalStackLayout Padding="{StaticResource LayoutPadding}"
+                             Spacing="16">
 
-            <Label Text="Problemas diarios" />
-            <Stepper Minimum="1" Maximum="20" Increment="1" Value="{Binding DailyProblemsCount}"/>
-            <Label Text="Cantidad: {Binding DailyProblemsCount}" />
+            <Label Text="Ajustes"
+                   Style="{StaticResource Title1}" />
 
-            <Label Text="Dificultad mínima" />
-            <Stepper Minimum="1" Maximum="5" Increment="1" Value="{Binding DifficultyMin}"/>
-            <Label Text="{Binding DifficultyMin}" />
+            <!-- ══════════ Apariencia ══════════ -->
+            <Border Style="{StaticResource CardStyle}">
+                <VerticalStackLayout Spacing="12">
 
-            <Label Text="Dificultad máxima" />
-            <Stepper Minimum="1" Maximum="5" Increment="1" Value="{Binding DifficultyMax}"/>
-            <Label Text="{Binding DifficultyMax}" />
+                    <Label Text="Apariencia"
+                           Style="{StaticResource Body1Strong}" />
 
-            <Label Text="Preferencia de pistas" />
-            <Picker ItemsSource="{Binding HintOptions}" SelectedItem="{Binding HintsPreference}" />
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Tema"
+                               Style="{StaticResource Caption1}"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                        <Picker Title="Selecciona un tema"
+                                ItemsSource="{Binding ThemeOptions}"
+                                SelectedItem="{Binding SelectedTheme, Mode=TwoWay}" />
+                    </VerticalStackLayout>
 
-            <Button Text="Guardar" Command="{Binding SaveSettingsCommand}" />
-        </StackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ══════════ Aprendizaje ══════════ -->
+            <Border Style="{StaticResource CardStyle}">
+                <VerticalStackLayout Spacing="12">
+
+                    <Label Text="Aprendizaje"
+                           Style="{StaticResource Body1Strong}" />
+
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Comportamiento de las pistas"
+                               Style="{StaticResource Caption1}"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                        <Picker Title="¿Cómo prefieres recibir ayuda?"
+                                ItemsSource="{Binding HintBehaviorOptions}"
+                                SelectedItem="{Binding HintBehavior, Mode=TwoWay}" />
+                    </VerticalStackLayout>
+
+                    <Label Text="Para cambiar tu curso, objetivo o intereses, ve a la pestaña «Perfil»."
+                           Style="{StaticResource Caption1}"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ══════════ Notificaciones ══════════ -->
+            <Border Style="{StaticResource CardStyle}">
+                <VerticalStackLayout Spacing="12">
+
+                    <Label Text="Notificaciones"
+                           Style="{StaticResource Body1Strong}" />
+
+                    <!-- Daily reminder toggle row -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Recordatorio diario"
+                                   Style="{StaticResource Body2Strong}" />
+                            <Label Text="Te avisamos cuando sea tu hora habitual de practicar."
+                                   Style="{StaticResource Caption1}"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1"
+                                IsToggled="{Binding NotifyDailyReminder, Mode=TwoWay}"
+                                VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Reminder time picker -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12"
+                          IsVisible="{Binding NotifyDailyReminder}">
+                        <Label Grid.Column="0"
+                               Text="Hora del recordatorio"
+                               Style="{StaticResource Body2}"
+                               VerticalOptions="Center" />
+                        <TimePicker Grid.Column="1"
+                                    Time="{Binding NotifyTime, Mode=TwoWay}"
+                                    VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Sound -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Sonidos"
+                                   Style="{StaticResource Body2Strong}" />
+                            <Label Text="Reproducir sonido al acertar o fallar."
+                                   Style="{StaticResource Caption1}"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1"
+                                IsToggled="{Binding SoundOn, Mode=TwoWay}"
+                                VerticalOptions="Center" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ══════════ Action buttons ══════════ -->
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                <Button Grid.Column="0"
+                        Text="Restablecer"
+                        Command="{Binding ResetDefaultsCommand}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                        Padding="18,10" />
+                <Button Grid.Column="1"
+                        Text="Guardar"
+                        Command="{Binding SaveSettingsCommand}" />
+            </Grid>
+
+            <!-- Status banner shown briefly after save -->
+            <Border IsVisible="{Binding StatusMessage, Converter={StaticResource IsNotNullOrEmpty}}"
+                    BackgroundColor="#DCFCE7"
+                    Stroke="#16A34A"
+                    StrokeThickness="1"
+                    Padding="12,8">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <Label Text="{Binding StatusMessage}"
+                       TextColor="#166534"
+                       Style="{StaticResource Caption1Strong}"
+                       HorizontalTextAlignment="Center" />
+            </Border>
+
+            <BoxView HeightRequest="16" Color="Transparent" />
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

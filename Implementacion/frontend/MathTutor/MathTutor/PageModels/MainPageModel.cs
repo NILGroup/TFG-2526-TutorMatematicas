@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using MathTutor.Models;
 using MathTutor.Services;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Diagnostics;
 
 namespace MathTutor.PageModels
@@ -14,11 +13,23 @@ namespace MathTutor.PageModels
         private readonly ProblemService _problemService;
         private readonly SessionService _sessionService;
 
+        // UserId is hard-coded for now; replace with auth once available
+        private const string DefaultUserId = "user123";
+
         [ObservableProperty]
         private ObservableCollection<ProblemOut> recommendedProblems = new();
 
         [ObservableProperty]
         private bool hasSession;
+
+        [ObservableProperty]
+        private bool isBusy;
+
+        [ObservableProperty]
+        private string? errorMessage;
+
+        /// <summary>True when we are showing the empty pre-generation state.</summary>
+        public bool ShowEmptyState => !HasSession && !IsBusy;
 
         private string? _sessionId;
 
@@ -29,53 +40,72 @@ namespace MathTutor.PageModels
             _sessionService = sessionService;
         }
 
-        [RelayCommand]
-        private async Task Appearing()
-        {
-            // Start or refresh the daily session
-            var response = await _sessionService.StartSessionAsync(
-                new StartSessionRequest { UserId = "user123", K = 5 });
+        // When HasSession or IsBusy changes, recompute ShowEmptyState
+        partial void OnHasSessionChanged(bool value) => OnPropertyChanged(nameof(ShowEmptyState));
+        partial void OnIsBusyChanged(bool value) => OnPropertyChanged(nameof(ShowEmptyState));
 
-            if (response?.ProblemIds != null)
-            {
-                _sessionId = response.SessionId;
-                HasSession = true;
-                RecommendedProblems.Clear();
-                foreach (string id in response.ProblemIds)
-                {
-                    var prob = await _problemService.GetProblemByIdAsync(id);
-                    if (prob != null) RecommendedProblems.Add(prob);
-                }
-            }
-        }
-
+        // ────────────────────────────────────────────────────────────────
+        // No auto-generation on Appearing — the user controls when to
+        // request a new session via the "Generar sesión" button.
+        // ────────────────────────────────────────────────────────────────
         [RelayCommand]
-        private async Task ContinueSession()
-        {
-            // Safely obtain a current Page from Application windows and use the async API.
-            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
-            if (page != null)
-            {
-                await page.DisplayAlertAsync("Sesión", "Continuar la sesión...", "OK");
-            }
-            else
-            {
-                Debug.WriteLine("ContinueSession: no current Page available to display alert.");
-            }
-        }
+        private Task Appearing() => Task.CompletedTask;
 
         [RelayCommand]
         private async Task StartProblem(string id)
         {
-            // Safely obtain a current Page from Application windows and use the async API.
-            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
-            if (page != null)
+            if (string.IsNullOrWhiteSpace(id)) return;
+
+            var route = $"ProblemDetailPage?problemId={Uri.EscapeDataString(id)}";
+            if (!string.IsNullOrWhiteSpace(_sessionId))
+                route += $"&sessionId={Uri.EscapeDataString(_sessionId)}";
+
+            await Shell.Current.GoToAsync(route);
+        }
+
+        [RelayCommand]
+        private async Task GenerateSession()
+        {
+            if (IsBusy) return;
+
+            IsBusy = true;
+            ErrorMessage = null;
+
+            try
             {
-                await page.DisplayAlertAsync("Seleccionado", $"Abrir problema: {id}", "OK");
+                var response = await _sessionService.StartSessionAsync(
+                    new StartSessionRequest { UserId = DefaultUserId, K = 5 });
+
+                RecommendedProblems.Clear();
+
+                if (response?.ProblemIds != null && response.ProblemIds.Count > 0)
+                {
+                    _sessionId = response.SessionId;
+
+                    foreach (var id in response.ProblemIds)
+                    {
+                        var prob = await _problemService.GetProblemByIdAsync(id);
+                        if (prob != null)
+                            RecommendedProblems.Add(prob);
+                    }
+
+                    HasSession = RecommendedProblems.Count > 0;
+                }
+                else
+                {
+                    HasSession = false;
+                    ErrorMessage = "El servidor no devolvió problemas. Comprueba tus preferencias.";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine($"StartProblem: no current Page available to display alert for id={id}.");
+                HasSession = false;
+                ErrorMessage = "No se pudo conectar con el servidor.";
+                Debug.WriteLine($"GenerateSession failed: {ex}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
     }

@@ -113,6 +113,9 @@ def get_problem(problem_id: str):
     instantiated = _instantiate_parameters(d.get("parameters", {}) or {})
     rendered = _render_statement(d.get("statement", ""), instantiated)
 
+    solution_steps = d.get("solution_steps", [])
+    answer = solution_steps[-1] if solution_steps is not None else d.get("answer")
+
     return ProblemDetailOut(
         id=str(d["_id"]),
         course=d.get("course"),
@@ -124,5 +127,5 @@ def get_problem(problem_id: str):
         parameters=d.get("parameters", {}) or {},
         instantiated_parameters=instantiated,
         solution_steps=d.get("solution_steps", []),
-        answer=d.get("answer"),
+        answer=answer,
     )

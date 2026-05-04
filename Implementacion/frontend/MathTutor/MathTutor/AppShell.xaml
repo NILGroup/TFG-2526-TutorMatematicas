@@ -8,6 +8,7 @@
     Shell.FlyoutBehavior="Flyout"
     Title="MathTutor">
 
+    <!-- ── Tab bar (main navigation) ── -->
     <TabBar>
         <ShellContent Title="Hoy" Icon="calendar.png"
                       ContentTemplate="{DataTemplate pages:MainPage}" />
@@ -18,4 +19,18 @@
         <ShellContent Title="Ajustes" Icon="settings.png"
                       ContentTemplate="{DataTemplate pages:SettingsPage}" />
     </TabBar>
+
+    <!--
+    <Shell.Routes>
+        <Route Route="ProblemDetailPage"
+               Shell.PresentationMode="ModalStackNavigation"
+               ContentTemplate="{DataTemplate pages:ProblemDetailPage}" />
+
+        <Route Route="QuestionnairePage"
+               Shell.PresentationMode="ModalStackNavigation"
+               ContentTemplate="{DataTemplate pages:QuestionnairePage}" />
+    </Shell.Routes>
+    -->
+    <!-- Removed invalid <Shell.Routes> XAML section.
+         Routes should be registered in code-behind via Routing.RegisterRoute(...) -->
 </Shell>

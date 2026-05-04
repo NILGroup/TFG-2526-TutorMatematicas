@@ -7,43 +7,193 @@
              x:Class="MathTutor.Pages.ProblemsLibraryPage"
              x:Name="ProblemsLibrary"
              x:DataType="pageModels:ProblemsLibraryPageModel"
-             Title="Problems">
+             Title="Biblioteca">
 
+    <Grid>
+        <!--
+            Navigation strategy
+            ───────────────────
+            We use CollectionView's built-in SelectionChanged event instead of
+            TapGestureRecognizer. This is the MAUI-idiomatic approach and works
+            reliably on Windows where gesture recognizers attached to Border or
+            Grid containers fail to fire when child Labels swallow taps.
 
-    <ContentPage.Behaviors>
-        <toolkit:EventToCommandBehavior EventName="Appearing"
-                                        Command="{Binding AppearingCommand}" />
-    </ContentPage.Behaviors>
+            SelectedItem is reset to null in code-behind after navigating so
+            tapping the same item twice still triggers the navigation.
+        -->
+        <CollectionView x:Name="ProblemsCollectionView"
+                        ItemsSource="{Binding Problems}"
+                        SelectionMode="Single"
+                        SelectionChanged="OnProblemSelected"
+                        RemainingItemsThreshold="5">
 
-    <StackLayout Padding="16" Spacing="10">
-        <Label Text="Biblioteca" FontSize="24" FontAttributes="Bold" />
-        <SearchBar Placeholder="Buscar..."
-                   Text="{Binding SearchQuery, Mode=TwoWay}" />
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="{StaticResource LayoutPadding}"
+                                     Spacing="{StaticResource LayoutSpacing}">
 
-        <Picker Title="Curso" ItemsSource="{Binding CourseOptions}"
-                SelectedItem="{Binding SelectedCourse}" />
-        <Picker Title="KC" ItemsSource="{Binding KcOptions}"
-                SelectedItem="{Binding SelectedKc}" />
+                    <Label Text="Biblioteca de Problemas"
+                           Style="{StaticResource Title2}" />
 
-        <Stepper Minimum="1" Maximum="5" Increment="1" Value="{Binding SelectedDifficulty}"/>
-        <Label Text="Dificultad: {Binding SelectedDifficulty}" />
+                    <Border>
+                        <SearchBar Placeholder="Buscar por enunciado, KC o etiqueta…"
+                                   Text="{Binding SearchQuery, Mode=TwoWay}"
+                                   BackgroundColor="Transparent" />
+                    </Border>
 
-        <CollectionView ItemsSource="{Binding Problems}">
+                    <Grid ColumnDefinitions="*,*,Auto" ColumnSpacing="8">
+                        <Border Grid.Column="0" Padding="4,0">
+                            <Picker Title="Curso"
+                                    ItemsSource="{Binding CourseOptionsWithAll}"
+                                    SelectedItem="{Binding SelectedCourseDisplay, Mode=TwoWay}" />
+                        </Border>
+
+                        <Border Grid.Column="1" Padding="4,0">
+                            <Picker Title="Área (KC)"
+                                    ItemsSource="{Binding KcOptions}"
+                                    SelectedItem="{Binding SelectedKc}" />
+                        </Border>
+
+                        <Border Grid.Column="2" Padding="8,4">
+                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                <Label Text="Dif." Style="{StaticResource Caption1}"
+                                       VerticalOptions="Center" />
+                                <Button Text="−"
+                                        Command="{Binding DecreaseDifficultyCommand}"
+                                        FontSize="16" Padding="10,4"
+                                        CornerRadius="6" HeightRequest="36" WidthRequest="36" />
+
+                                <Label Text="{Binding DifficultyDisplay}"
+                                       VerticalOptions="Center"
+                                       MinimumWidthRequest="28"
+                                       HorizontalTextAlignment="Center"
+                                       Style="{StaticResource Body1Strong}" />
+
+                                <Button Text="+"
+                                        Command="{Binding IncreaseDifficultyCommand}"
+                                        FontSize="16" Padding="10,4"
+                                        CornerRadius="6" HeightRequest="36" WidthRequest="36" />
+                            </HorizontalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <Label Text="{Binding ResultsLabel}"
+                           Style="{StaticResource Caption1}"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                </VerticalStackLayout>
+            </CollectionView.Header>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center"
+                                     Padding="32" Spacing="12">
+                    <Label Text="Sin resultados"
+                           Style="{StaticResource Title3}"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="Prueba con otros filtros o elimina la búsqueda."
+                           Style="{StaticResource Body2}"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
             <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Border Margin="0,4" Padding="10"
-                            Stroke="#e0e0e0">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="8" />
-                        </Border.StrokeShape>
-                        <StackLayout>
-                            <Label Text="{Binding Statement}" FontAttributes="Bold" />
-                            <Label Text="Curso: {Binding Course}" FontSize="12" />
-                            <Label Text="Tema: {Binding Kc}" FontSize="12" />
-                        </StackLayout>
+                <DataTemplate x:DataType="models:ProblemOut">
+                    <Border Style="{StaticResource CardStyle}"
+                            Margin="{OnIdiom '12,4', Desktop='16,6'}">
+
+                        <VerticalStackLayout Spacing="10">
+
+                            <HorizontalStackLayout Spacing="8">
+                                <Border BackgroundColor="{StaticResource Primary}"
+                                        StrokeThickness="0" Padding="8,3">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="6" />
+                                    </Border.StrokeShape>
+                                    <Label TextColor="White"
+                                           Style="{StaticResource Caption1Strong}">
+                                        <Label.Text>
+                                            <Binding Path="Course"
+                                                     TargetNullValue="Curso ?"
+                                                     FallbackValue="Curso ?" />
+                                        </Label.Text>
+                                    </Label>
+                                </Border>
+
+                                <Border BackgroundColor="{AppThemeBinding
+                                            Light={StaticResource LightSecondaryBackground},
+                                            Dark={StaticResource DarkSecondaryBackground}}"
+                                        StrokeThickness="1"
+                                        Stroke="{StaticResource Primary}"
+                                        Padding="8,3">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="6" />
+                                    </Border.StrokeShape>
+                                    <Label TextColor="{StaticResource Primary}"
+                                           Style="{StaticResource Caption1Strong}">
+                                        <Label.Text>
+                                            <Binding Path="Difficulty"
+                                                     StringFormat="Dif. {0}/5"
+                                                     TargetNullValue="—" />
+                                        </Label.Text>
+                                    </Label>
+                                </Border>
+                            </HorizontalStackLayout>
+
+                            <Label Text="{Binding RenderedStatement}"
+                                   Style="{StaticResource Body1}"
+                                   MaxLines="3"
+                                   LineBreakMode="TailTruncation" />
+
+                            <Label Style="{StaticResource Caption1}"
+                                   TextColor="{AppThemeBinding
+                                       Light={StaticResource Gray500},
+                                       Dark={StaticResource Gray400}}">
+                                <Label.Text>
+                                    <Binding Path="Kc"
+                                             StringFormat="Área: {0}"
+                                             TargetNullValue="" />
+                                </Label.Text>
+                            </Label>
+
+                            <FlexLayout Wrap="Wrap"
+                                        JustifyContent="Start"
+                                        AlignItems="Center"
+                                        BindableLayout.ItemsSource="{Binding Tags}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="x:String">
+                                        <Border BackgroundColor="{StaticResource Secondary}"
+                                                StrokeThickness="0"
+                                                Padding="7,3"
+                                                Margin="0,0,5,4">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="5" />
+                                            </Border.StrokeShape>
+                                            <Label Text="{Binding .}"
+                                                   TextColor="{StaticResource Primary}"
+                                                   Style="{StaticResource Caption2}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </FlexLayout>
+
+                        </VerticalStackLayout>
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+
+            <CollectionView.Footer>
+                <BoxView HeightRequest="24" Color="Transparent" />
+            </CollectionView.Footer>
+
         </CollectionView>
-    </StackLayout>
+
+        <Border IsVisible="{Binding IsLoading}"
+                BackgroundColor="#AA000000"
+                StrokeThickness="0">
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               Color="{StaticResource White}"
+                               HeightRequest="48" WidthRequest="48"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+        </Border>
+    </Grid>
 </ContentPage>

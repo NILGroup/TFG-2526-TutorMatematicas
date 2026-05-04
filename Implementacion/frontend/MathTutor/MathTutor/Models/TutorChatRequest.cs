@@ -1,10 +1,22 @@
-﻿namespace MathTutor.Models
+﻿using System.Text.Json.Serialization;
+
+namespace MathTutor.Models
 {
     public class TutorChatRequest
     {
-        public string ProblemId { get; set; }
-        public string Question { get; set; }
+        [JsonPropertyName("problem_id")]
+        public string ProblemId { get; set; } = "";
+
+        [JsonPropertyName("question")]
+        public string Question { get; set; } = "";
+
+        [JsonPropertyName("user_id")]
         public string? UserId { get; set; }
+
+        [JsonPropertyName("current_attempt")]
         public string? CurrentAttempt { get; set; }
+
+        [JsonPropertyName("rendered_statement")]
+        public string? RenderedStatement { get; set; }
     }
 }

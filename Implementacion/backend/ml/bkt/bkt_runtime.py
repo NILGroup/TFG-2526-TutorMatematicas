@@ -418,7 +418,7 @@ def recommend_problems_for_user(
         return []
 
     # --- Build performance state (heuristic inputs) ---
-    performance_state = build_performance_state(user_id, db) if db else {}
+    performance_state = build_performance_state(user_id, db) if db is not None else {}
 
     # --- Build effective BKT state (BKT inputs, cold-start aware) ---
     stored_bkt = state.get("bkt_state") or {}

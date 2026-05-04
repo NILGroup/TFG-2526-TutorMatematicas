@@ -2,52 +2,172 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pageModels="clr-namespace:MathTutor.PageModels"
-             xmlns:models="clr-namespace:MathTutor.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="MathTutor.Pages.ProfilePage"
-             x:Name="MetaPage"
-             Title="Profile">
+             x:DataType="pageModels:ProfilePageModel"
+             Title="Perfil">
 
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior EventName="Appearing"
                                         Command="{Binding AppearingCommand}" />
     </ContentPage.Behaviors>
 
-    <ScrollView>
-        <StackLayout Padding="16" Spacing="12">
-            <Label Text="Perfil" FontSize="24" FontAttributes="Bold" />
-            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto">
-                <StackLayout Grid.Column="0">
-                    <Label Text="Completados" FontAttributes="Bold" />
-                    <Label Text="{Binding CompletedProblems}" />
-                </StackLayout>
-                <StackLayout Grid.Column="1">
-                    <Label Text="Totales" FontAttributes="Bold" />
-                    <Label Text="{Binding TotalProblems}" />
-                </StackLayout>
-                <StackLayout Grid.Column="2">
-                    <Label Text="Precisión" FontAttributes="Bold" />
-                    <Label Text="{Binding AccuracyPct}" />
-                </StackLayout>
-                <StackLayout Grid.Column="3">
-                    <Label Text="Racha" FontAttributes="Bold" />
-                    <Label Text="{Binding Streak}" />
-                </StackLayout>
-            </Grid>
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="{StaticResource LayoutPadding}"
+                                 Spacing="16">
 
-            <CollectionView ItemsSource="{Binding TopicProgress}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <StackLayout Margin="0,8">
-                            <Label Text="{Binding TopicName}" FontAttributes="Bold" />
-                            <ProgressBar Progress="{Binding Progress}" HeightRequest="8" />
-                            <Label Text="{Binding ProgressMessage}" FontSize="10" />
-                        </StackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                <Label Text="Perfil"
+                       Style="{StaticResource Title1}" />
 
-            <Button Text="Repetir intereses" Command="{Binding RepeatInterestsCommand}" />
-        </StackLayout>
-    </ScrollView>
+                <!-- ══════════ Progress card ══════════ -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="14">
+
+                        <Label Text="Tu progreso"
+                               Style="{StaticResource Body1Strong}" />
+
+                        <!-- Stats grid: 3 columns -->
+                        <Grid ColumnDefinitions="*,*,*"
+                              ColumnSpacing="8">
+
+                            <!-- Accuracy -->
+                            <VerticalStackLayout Grid.Column="0"
+                                                 HorizontalOptions="Center"
+                                                 Spacing="2">
+                                <Label Text="{Binding AccuracyDisplay}"
+                                       Style="{StaticResource Title2}"
+                                       TextColor="{StaticResource Primary}"
+                                       HorizontalTextAlignment="Center" />
+                                <Label Text="Acierto"
+                                       Style="{StaticResource Caption1}"
+                                       HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+
+                            <!-- Total attempts -->
+                            <VerticalStackLayout Grid.Column="1"
+                                                 HorizontalOptions="Center"
+                                                 Spacing="2">
+                                <Label Text="{Binding TotalAttempts}"
+                                       Style="{StaticResource Title2}"
+                                       HorizontalTextAlignment="Center" />
+                                <Label Text="Intentos"
+                                       Style="{StaticResource Caption1}"
+                                       HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+
+                            <!-- Streak -->
+                            <VerticalStackLayout Grid.Column="2"
+                                                 HorizontalOptions="Center"
+                                                 Spacing="2">
+                                <HorizontalStackLayout HorizontalOptions="Center" Spacing="2">
+                                    <Label Text="🔥" Style="{StaticResource Title3}" />
+                                    <Label Text="{Binding Streak}"
+                                           Style="{StaticResource Title2}"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <Label Text="Racha"
+                                       Style="{StaticResource Caption1}"
+                                       HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ══════════ Preferences summary ══════════ -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="12">
+
+                        <Label Text="Preferencias actuales"
+                               Style="{StaticResource Body1Strong}" />
+
+                        <!-- Key-value rows -->
+                        <Grid ColumnDefinitions="Auto,*" RowSpacing="8" ColumnSpacing="12">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="0" Grid.Column="0"
+                                   Text="Curso"
+                                   Style="{StaticResource Caption1}"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                            <Label Grid.Row="0" Grid.Column="1"
+                                   Text="{Binding CourseLevel}"
+                                   Style="{StaticResource Body2Strong}" />
+
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Text="Objetivo"
+                                   Style="{StaticResource Caption1}"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                            <Label Grid.Row="1" Grid.Column="1"
+                                   Text="{Binding PrimaryObjective}"
+                                   Style="{StaticResource Body2Strong}" />
+
+                            <Label Grid.Row="2" Grid.Column="0"
+                                   Text="Dificultad"
+                                   Style="{StaticResource Caption1}"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                            <Label Grid.Row="2" Grid.Column="1"
+                                   Text="{Binding TargetDifficulty, StringFormat='{0}/5'}"
+                                   Style="{StaticResource Body2Strong}" />
+
+                            <Label Grid.Row="3" Grid.Column="0"
+                                   Text="Por sesión"
+                                   Style="{StaticResource Caption1}"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                            <Label Grid.Row="3" Grid.Column="1"
+                                   Text="{Binding ProblemsPerSession, StringFormat='{0} problemas'}"
+                                   Style="{StaticResource Body2Strong}" />
+
+                            <Label Grid.Row="4" Grid.Column="0"
+                                   Text="Cursos cercanos"
+                                   Style="{StaticResource Caption1}"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                            <Label Grid.Row="4" Grid.Column="1"
+                                   Style="{StaticResource Body2Strong}">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label"
+                                                 Binding="{Binding AllowCrossCourse}" Value="True">
+                                        <Setter Property="Text" Value="Permitidos ✓" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label"
+                                                 Binding="{Binding AllowCrossCourse}" Value="False">
+                                        <Setter Property="Text" Value="Solo tu curso" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ══════════ Edit preferences CTA ══════════ -->
+                <Button Text="Modificar mis preferencias"
+                        Command="{Binding OpenQuestionnaireCommand}"
+                        HorizontalOptions="Fill" />
+
+                <Label Text="Responde al cuestionario para ajustar tus recomendaciones."
+                       Style="{StaticResource Caption1}"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+
+                <BoxView HeightRequest="16" Color="Transparent" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Loading overlay -->
+        <Border IsVisible="{Binding IsLoading}"
+                BackgroundColor="#AA000000"
+                StrokeThickness="0">
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               Color="White"
+                               HeightRequest="48" WidthRequest="48"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+        </Border>
+    </Grid>
 </ContentPage>

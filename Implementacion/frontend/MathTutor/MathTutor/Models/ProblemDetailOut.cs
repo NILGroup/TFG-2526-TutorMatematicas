@@ -2,7 +2,7 @@
 
 namespace MathTutor.Models
 {
-    public class ProblemOut
+    public class ProblemDetailOut
     {
         [JsonPropertyName("id")]
         public string Id { get; set; } = string.Empty;
@@ -30,5 +30,11 @@ namespace MathTutor.Models
 
         [JsonPropertyName("instantiated_parameters")]
         public Dictionary<string, int> InstantiatedParameters { get; set; } = new();
+
+        [JsonPropertyName("solution_steps")]
+        public List<string> SolutionSteps { get; set; } = new();
+
+        [JsonPropertyName("answer")]
+        public string? Answer { get; set; }
     }
 }

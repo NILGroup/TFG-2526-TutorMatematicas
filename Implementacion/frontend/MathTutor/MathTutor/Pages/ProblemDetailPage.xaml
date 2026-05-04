@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pageModels="clr-namespace:MathTutor.PageModels"
+             xmlns:models="clr-namespace:MathTutor.Models"
+             xmlns:converters="clr-namespace:MathTutor.Utilities"
+             x:Class="MathTutor.Pages.ProblemDetailPage"
+             x:DataType="pageModels:ProblemDetailPageModel"
+             Title="Problema">
+
+    <ContentPage.Resources>
+        <converters:DifficultyColorConverter x:Key="DifficultyColor"/>
+        <converters:IsNotZeroConverter x:Key="IsNotZero"/>
+    </ContentPage.Resources>
+
+    <Grid>
+
+        <!-- ════════ LOADING ════════ -->
+        <ActivityIndicator IsRunning="{Binding IsLoading}"
+                           IsVisible="{Binding IsLoading}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+
+        <!-- ════════ MAIN CONTENT ════════ -->
+        <ScrollView IsVisible="{Binding IsNotLoading}">
+            <VerticalStackLayout Padding="{StaticResource LayoutPadding}"
+                                 Spacing="16">
+
+                <!-- ── Metadata row ── -->
+                <FlexLayout Wrap="Wrap" Direction="Row" AlignContent="Start">
+                    <Border Margin="0,0,6,4" Padding="8,3"
+                            BackgroundColor="{StaticResource Primary}"
+                            StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8"/>
+                        </Border.StrokeShape>
+                        <Label Text="{Binding Problem.Course}"
+                               TextColor="White"
+                               Style="{StaticResource Caption1Strong}"
+                               LineHeight="1"/>
+                    </Border>
+
+                    <Border Margin="0,0,6,4" Padding="8,3"
+                            BackgroundColor="{Binding Problem.Difficulty, Converter={StaticResource DifficultyColor}}"
+                            StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8"/>
+                        </Border.StrokeShape>
+                        <Label Text="{Binding Problem.Difficulty, StringFormat='Nivel {0}'}"
+                               TextColor="White"
+                               Style="{StaticResource Caption1Strong}"
+                               LineHeight="1"/>
+                    </Border>
+
+                    <Label Text="{Binding Problem.Kc}"
+                           Style="{StaticResource Caption1}"
+                           TextColor="{StaticResource Gray400}"
+                           VerticalOptions="Center"
+                           Margin="2,0,0,4"/>
+                </FlexLayout>
+
+                <!-- ── Tag chips ── -->
+                <FlexLayout Wrap="Wrap" Direction="Row" AlignContent="Start"
+                            BindableLayout.ItemsSource="{Binding Problem.Tags}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Border Margin="0,0,6,4" Padding="8,3"
+                                    BackgroundColor="{StaticResource Secondary}"
+                                    StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Label Text="{Binding .}"
+                                       TextColor="{StaticResource SecondaryDarkText}"
+                                       Style="{StaticResource Caption2}"
+                                       LineHeight="1"/>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <!-- ── Statement card ── -->
+                <Border Style="{StaticResource CardStyle}">
+                    <Label Text="{Binding Problem.RenderedStatement}"
+                           Style="{StaticResource Body1}"
+                           LineBreakMode="WordWrap"/>
+                </Border>
+
+                <!-- ══════════════════════════════════════════════════════
+                     REVEALED HINTS  (each "Ver pista" press appends one)
+                     ══════════════════════════════════════════════════════ -->
+                <VerticalStackLayout Spacing="8"
+                                     IsVisible="{Binding RevealedHints.Count, Converter={StaticResource IsNotZero}, FallbackValue=False}">
+                    <Label Text="Pistas reveladas"
+                           Style="{StaticResource Body2Strong}"/>
+
+                    <VerticalStackLayout Spacing="6"
+                                         BindableLayout.ItemsSource="{Binding RevealedHints}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Border StrokeThickness="0"
+                                        Padding="10,8"
+                                        BackgroundColor="{AppThemeBinding
+                                            Light=#EEF2FF,
+                                            Dark=#1E1B4B}">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding .}"
+                                           Style="{StaticResource Body2}"
+                                           LineBreakMode="WordWrap"/>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- ══════════════════════════════════════════════════════
+                     PHASE 1 — Answer input
+                     ══════════════════════════════════════════════════════ -->
+                <VerticalStackLayout Spacing="10"
+                                     IsVisible="{Binding IsAnswerPhase}">
+
+                    <Label Text="Tu respuesta"
+                           Style="{StaticResource Body2Strong}"/>
+
+                    <Border Style="{StaticResource CardStyle}" Padding="4">
+                        <Entry Text="{Binding AnswerText, Mode=TwoWay}"
+                               Placeholder="Escribe tu respuesta aquí..."
+                               ReturnCommand="{Binding SubmitAnswerCommand}"
+                               ReturnType="Done"/>
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                                Text="Comprobar"
+                                Command="{Binding SubmitAnswerCommand}"/>
+
+                        <!-- Now reveals the next solution step instead of opening chat -->
+                        <Button Grid.Column="1"
+                                Text="Ver pista"
+                                Command="{Binding RequestHintCommand}"
+                                IsEnabled="{Binding HasMoreHints}"
+                                BackgroundColor="Transparent"
+                                BorderColor="{StaticResource Primary}"
+                                BorderWidth="1.5"
+                                TextColor="{StaticResource Primary}"/>
+                    </Grid>
+                </VerticalStackLayout>
+
+                <!-- ══════════════════════════════════════════════════════
+                     PHASE 2 — Self-assessment (now showing the real answer)
+                     ══════════════════════════════════════════════════════ -->
+                <VerticalStackLayout Spacing="12"
+                                     IsVisible="{Binding IsAssessmentPhase}">
+
+                    <!-- Student's answer -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <Label Text="{Binding AnswerText, StringFormat='Tu respuesta: {0}'}"
+                               Style="{StaticResource Body2}"
+                               TextColor="{StaticResource Gray400}"/>
+                    </Border>
+
+                    <!-- Real answer revealed -->
+                    <Border Style="{StaticResource CardStyle}"
+                            BackgroundColor="{AppThemeBinding
+                                Light=#ECFDF5,
+                                Dark=#064E3B}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Respuesta correcta"
+                                   Style="{StaticResource Caption1Strong}"
+                                   TextColor="{AppThemeBinding Light=#065F46, Dark=#A7F3D0}"/>
+                            <Label Text="{Binding ExpectedAnswer}"
+                                   Style="{StaticResource Body1Strong}"
+                                   TextColor="{AppThemeBinding Light=#065F46, Dark=#A7F3D0}"
+                                   LineBreakMode="WordWrap"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Label Text="¿Acertaste?"
+                           Style="{StaticResource Body1Strong}"
+                           HorizontalTextAlignment="Center"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                                Text="✓  Correcto"
+                                Command="{Binding MarkCorrectCommand}"
+                                BackgroundColor="#22C55E"
+                                TextColor="White"/>
+                        <Button Grid.Column="1"
+                                Text="✗  Incorrecto"
+                                Command="{Binding MarkIncorrectCommand}"
+                                BackgroundColor="#EF4444"
+                                TextColor="White"/>
+                    </Grid>
+                </VerticalStackLayout>
+
+                <!-- ══════════════════════════════════════════════════════
+                     PHASE 3 — Result
+                     ══════════════════════════════════════════════════════ -->
+                <Border Style="{StaticResource CardStyle}"
+                        IsVisible="{Binding HasResult}">
+                    <Label Text="{Binding ResultMessage}"
+                           Style="{StaticResource Body1Strong}"
+                           HorizontalTextAlignment="Center">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label"
+                                         Binding="{Binding IsAnswerCorrect}" Value="True">
+                                <Setter Property="TextColor" Value="#22C55E"/>
+                            </DataTrigger>
+                            <DataTrigger TargetType="Label"
+                                         Binding="{Binding IsAnswerCorrect}" Value="False">
+                                <Setter Property="TextColor" Value="#EF4444"/>
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </Border>
+
+                <BoxView HeightRequest="72" Color="Transparent"/>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ════════ CHAT PANEL ════════ -->
+        <Border Style="{StaticResource CardStyle}"
+                IsVisible="{Binding IsChatVisible}"
+                HorizontalOptions="End"
+                VerticalOptions="Fill"
+                WidthRequest="{OnIdiom 360, Phone=320}"
+                Margin="0"
+                Padding="0"
+                ZIndex="5">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="0"/>
+            </Border.StrokeShape>
+
+            <Grid RowDefinitions="Auto,*,Auto" RowSpacing="0">
+
+                <!-- Header -->
+                <Border Grid.Row="0"
+                        BackgroundColor="{StaticResource Primary}"
+                        StrokeThickness="0"
+                        Padding="16,12">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="0"/>
+                    </Border.StrokeShape>
+                    <Label Text="Tutor IA"
+                           Style="{StaticResource Body1Strong}"
+                           TextColor="White"/>
+                </Border>
+
+                <!-- Messages -->
+                <CollectionView x:Name="ChatCollectionView"
+                                Grid.Row="1"
+                                ItemsSource="{Binding ChatMessages}"
+                                Margin="12,8">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ChatMessage">
+                            <Grid Padding="0,4">
+                                <Border MaximumWidthRequest="280"
+                                        Padding="12,8"
+                                        StrokeThickness="0"
+                                        HorizontalOptions="Start">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="14"/>
+                                    </Border.StrokeShape>
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border"
+                                                     Binding="{Binding IsUser}" Value="True">
+                                            <Setter Property="HorizontalOptions" Value="End"/>
+                                            <Setter Property="BackgroundColor"
+                                                    Value="{StaticResource Primary}"/>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Border"
+                                                     Binding="{Binding IsUser}" Value="False">
+                                            <Setter Property="BackgroundColor"
+                                                    Value="{AppThemeBinding
+                                                        Light={StaticResource LightSecondaryBackground},
+                                                        Dark={StaticResource DarkSecondaryBackground}}"/>
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Label Text="{Binding Text}"
+                                           Style="{StaticResource Body2}"
+                                           LineBreakMode="WordWrap">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label"
+                                                         Binding="{Binding IsUser}" Value="True">
+                                                <Setter Property="TextColor" Value="White"/>
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!--
+                    Input row — kept FLAT (no nested rounded Border around the
+                    Entry) because the previous nested Border with StrokeShape
+                    rounded corners was eating the click on the send button on
+                    Windows. A simple Grid + Entry + Button is reliable.
+                -->
+                <Grid Grid.Row="2"
+                      ColumnDefinitions="*,Auto"
+                      ColumnSpacing="6"
+                      Padding="8,8,8,16"
+                      BackgroundColor="{AppThemeBinding
+                          Light={StaticResource LightSecondaryBackground},
+                          Dark={StaticResource DarkSecondaryBackground}}">
+
+                    <Entry Grid.Column="0"
+                           Text="{Binding ChatInput, Mode=TwoWay}"
+                           Placeholder="Pregunta al tutor..."
+                           ReturnCommand="{Binding SendChatMessageCommand}"
+                           ReturnType="Send"
+                           IsEnabled="{Binding IsNotSendingMessage}"
+                           VerticalOptions="Center"
+                           BackgroundColor="{AppThemeBinding
+                                Light={StaticResource LightBackground},
+                                Dark={StaticResource DarkBackground}}"/>
+
+                    <Button Grid.Column="1"
+                            Text="→"
+                            Command="{Binding SendChatMessageCommand}"
+                            IsEnabled="{Binding IsNotSendingMessage}"
+                            WidthRequest="48" HeightRequest="48"
+                            Padding="0"
+                            CornerRadius="8"
+                            FontSize="18"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- ════════ Chat toggle FAB ════════ -->
+        <Button Text="{Binding ChatToggleText}"
+                Command="{Binding ToggleChatCommand}"
+                IsVisible="{Binding IsNotLoading}"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                Margin="16,16,16,32"
+                WidthRequest="52" HeightRequest="52"
+                CornerRadius="26"
+                FontSize="20"
+                Padding="0"
+                ZIndex="10"/>
+    </Grid>
+</ContentPage>

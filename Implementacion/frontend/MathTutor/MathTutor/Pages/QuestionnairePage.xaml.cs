@@ -2,9 +2,9 @@ using MathTutor.PageModels;
 
 namespace MathTutor.Pages
 {
-    public partial class ProfilePage : ContentPage
+    public partial class QuestionnairePage : ContentPage
     {
-        public ProfilePage(ProfilePageModel model)
+        public QuestionnairePage(QuestionnairePageModel model)
         {
             InitializeComponent();
             BindingContext = model;

@@ -11,4 +11,4 @@ python -m scripts.build_dataset --dataset openai/gsm8k --config socratic --split
 python -m scripts.build_dataset --dataset openai/gsm8k --config socratic --split train --kc-tags-file data/kc_tags.json --taxonomy-file data/taxonomy.in --phase C --validate --validation-rate 0.2
 
 # Run all
-python -m scripts.build_dataset --dataset openai/gsm8k --config socratic --split train --kc-tags-file data/kc_tags.json --taxonomy-file data/taxonomy.in --max-samples 300 --validate --validation-rate 0.2
+python -m scripts.build_dataset --dataset openai/gsm8k --config socratic --split train --kc-tags-file data/kc_tags.json --taxonomy-file data/taxonomy.in --max-samples 700 --validate --validation-rate 0.2

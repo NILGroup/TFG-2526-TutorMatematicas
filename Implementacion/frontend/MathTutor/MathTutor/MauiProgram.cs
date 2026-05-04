@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Hosting;
+using Microsoft.Maui.Devices;
 
 namespace MathTutor
 {
@@ -28,31 +29,41 @@ namespace MathTutor
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
                     fonts.AddFont("FluentSystemIcons-Regular.ttf", FluentUI.FontFamily);
-                })
-                .Services.AddSingleton<ApiService>(sp =>
-                new ApiService("localhost:8000"));
+                });
+
+            // Backend URL varies by platform
+            string baseUrl = DeviceInfo.Platform == DevicePlatform.Android
+                ? "http://10.0.2.2:8000"
+                : "http://127.0.0.1:8000";
+            builder.Services.AddSingleton(sp => new ApiService(baseUrl));
 
 #if DEBUG
             builder.Logging.AddDebug();
-    		builder.Services.AddLogging(configure => configure.AddDebug());
+            builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
-            // Register domain services
+            // ── Services ─────────────────────────────────────────────
             builder.Services.AddSingleton<ProblemService>();
             builder.Services.AddSingleton<SessionService>();
             builder.Services.AddSingleton<TutorService>();
+            builder.Services.AddSingleton<UserService>();
 
-            // Register PageModels
+            // ── Page models ──────────────────────────────────────────
             builder.Services.AddSingleton<MainPageModel>();
             builder.Services.AddSingleton<ProblemsLibraryPageModel>();
+            builder.Services.AddSingleton<ProblemDetailPageModel>();
             builder.Services.AddSingleton<ProfilePageModel>();
             builder.Services.AddSingleton<SettingsPageModel>();
+            // Questionnaire is transient — each launch starts fresh
+            builder.Services.AddTransient<QuestionnairePageModel>();
 
-            // Register pages
-            builder.Services.AddTransient<MainPage>();
-            builder.Services.AddTransient<ProblemsLibraryPage>();
-            builder.Services.AddTransient<ProfilePage>();
-            builder.Services.AddTransient<SettingsPage>();
+            // ── Pages ────────────────────────────────────────────────
+            builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddSingleton<ProblemsLibraryPage>();
+            builder.Services.AddTransient<ProblemDetailPage>();
+            builder.Services.AddSingleton<ProfilePage>();
+            builder.Services.AddSingleton<SettingsPage>();
+            builder.Services.AddTransient<QuestionnairePage>();
 
             return builder.Build();
         }

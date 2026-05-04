@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using MathTutor.Pages;
 using Font = Microsoft.Maui.Font;
 
 namespace MathTutor
@@ -9,9 +10,21 @@ namespace MathTutor
         public AppShell()
         {
             InitializeComponent();
+
+            // ─────────────────────────────────────────────────────────────
+            // Register routes for pages that aren't in the tab bar but can
+            // be reached via Shell.Current.GoToAsync(...).
+            //
+            // Without this, GoToAsync silently fails — the navigation never
+            // happens and there is no exception, which is why tapping
+            // a problem card or "Modificar mis preferencias" did nothing.
+            // ─────────────────────────────────────────────────────────────
+            Routing.RegisterRoute(nameof(ProblemDetailPage), typeof(ProblemDetailPage));
+            Routing.RegisterRoute(nameof(QuestionnairePage), typeof(QuestionnairePage));
+
             var currentTheme = Application.Current!.RequestedTheme;
-            //ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
         }
+
         public static async Task DisplaySnackbarAsync(string message)
         {
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -33,7 +46,6 @@ namespace MathTutor
 
         public static async Task DisplayToastAsync(string message)
         {
-            // Toast is currently not working in MCT on Windows
             if (OperatingSystem.IsWindows())
                 return;
 

@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pageModels="clr-namespace:MathTutor.PageModels"
+             xmlns:models="clr-namespace:MathTutor.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="MathTutor.Pages.QuestionnairePage"
+             x:DataType="pageModels:QuestionnairePageModel"
+             Title="Cuestionario">
+
+    <ContentPage.Resources>
+        <toolkit:InvertedBoolConverter x:Key="InvertBool" />
+        <toolkit:IsStringNotNullOrEmptyConverter x:Key="IsNotNullOrEmpty" />
+    </ContentPage.Resources>
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior EventName="Appearing"
+                                        Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- ══════════ Header: title + progress bar ══════════ -->
+        <VerticalStackLayout Grid.Row="0"
+                             Padding="{StaticResource LayoutPadding}"
+                             Spacing="8">
+            <Label Text="Personaliza tus recomendaciones"
+                   Style="{StaticResource Title2}" />
+            <Label Text="{Binding StepIndicator}"
+                   Style="{StaticResource Caption1}"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+            <ProgressBar Progress="{Binding ProgressFraction}"
+                         ProgressColor="{StaticResource Primary}"
+                         HeightRequest="6" />
+        </VerticalStackLayout>
+
+        <!-- ══════════ Step content ══════════ -->
+        <ScrollView Grid.Row="1">
+            <Grid Padding="{StaticResource LayoutPadding}">
+
+                <!-- ───── Step 0: Course ───── -->
+                <VerticalStackLayout IsVisible="{Binding IsStep0}" Spacing="14">
+                    <Label Text="¿En qué curso estás?"
+                           Style="{StaticResource Title3}" />
+                    <Label Text="Esto determina el nivel base de los problemas recomendados."
+                           Style="{StaticResource Body2}"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+
+                    <Border Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Selecciona tu curso"
+                                   Style="{StaticResource Caption1Strong}" />
+                            <Picker Title="Curso"
+                                    ItemsSource="{Binding CourseOptions}"
+                                    SelectedItem="{Binding SelectedCourse, Mode=TwoWay}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- ───── Step 1: Objective ───── -->
+                <VerticalStackLayout IsVisible="{Binding IsStep1}" Spacing="14">
+                    <Label Text="¿Cuál es tu objetivo principal?"
+                           Style="{StaticResource Title3}" />
+                    <Label Text="Ajustamos el equilibrio entre repetición y exploración según tu objetivo."
+                           Style="{StaticResource Body2}"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+
+                    <CollectionView ItemsSource="{Binding ObjectiveOptions}"
+                                    SelectionMode="Single"
+                                    SelectedItem="{Binding SelectedObjective, Mode=TwoWay}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="pageModels:ObjectiveOption">
+                                <Border Margin="0,4"
+                                        Padding="14"
+                                        StrokeThickness="2"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
+                                        Stroke="Transparent">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12" />
+                                    </Border.StrokeShape>
+
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal" />
+                                            <VisualState x:Name="Selected">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label Text="{Binding DisplayName}"
+                                               Style="{StaticResource Body1Strong}" />
+                                        <Label Text="{Binding Description}"
+                                               Style="{StaticResource Caption1}"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+                <!-- ───── Step 2: Allow cross-course ───── -->
+                <VerticalStackLayout IsVisible="{Binding IsStep2}" Spacing="14">
+                    <Label Text="¿Permitir problemas de cursos cercanos?"
+                           Style="{StaticResource Title3}" />
+                    <Label Text="Si lo activas, podremos recomendarte problemas del curso anterior (refuerzo) o del siguiente (adelantar) cuando sea oportuno."
+                           Style="{StaticResource Body2}"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+
+                    <Border Style="{StaticResource CardStyle}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="Cursos cercanos"
+                                       Style="{StaticResource Body1Strong}" />
+                                <Label Style="{StaticResource Caption1}"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label"
+                                                     Binding="{Binding AllowCrossCourse}" Value="True">
+                                            <Setter Property="Text" Value="Activado: recibirás variedad de cursos." />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label"
+                                                     Binding="{Binding AllowCrossCourse}" Value="False">
+                                            <Setter Property="Text" Value="Desactivado: solo problemas de tu curso." />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1"
+                                    IsToggled="{Binding AllowCrossCourse, Mode=TwoWay}"
+                                    VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- ───── Step 3: Target difficulty ───── -->
+                <VerticalStackLayout IsVisible="{Binding IsStep3}" Spacing="14">
+                    <Label Text="¿Qué nivel de dificultad prefieres?"
+                           Style="{StaticResource Title3}" />
+                    <Label Text="Este será tu punto de partida. Ajustaremos la dificultad automáticamente según tu rendimiento."
+                           Style="{StaticResource Body2}"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+
+                    <Border Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="14">
+                            <Label Text="{Binding TargetDifficultyLabel}"
+                                   Style="{StaticResource Title2}"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="{StaticResource Primary}" />
+
+                            <Slider Minimum="1" Maximum="5"
+                                    Value="{Binding TargetDifficulty, Mode=TwoWay}"
+                                    MinimumTrackColor="{StaticResource Primary}" />
+
+                            <Grid ColumnDefinitions="*,*,*,*,*">
+                                <Label Grid.Column="0" Text="1" Style="{StaticResource Caption2}" HorizontalTextAlignment="Center" />
+                                <Label Grid.Column="1" Text="2" Style="{StaticResource Caption2}" HorizontalTextAlignment="Center" />
+                                <Label Grid.Column="2" Text="3" Style="{StaticResource Caption2}" HorizontalTextAlignment="Center" />
+                                <Label Grid.Column="3" Text="4" Style="{StaticResource Caption2}" HorizontalTextAlignment="Center" />
+                                <Label Grid.Column="4" Text="5" Style="{StaticResource Caption2}" HorizontalTextAlignment="Center" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- ───── Step 4: KC ratings ───── -->
+                <VerticalStackLayout IsVisible="{Binding IsStep4}" Spacing="14">
+                    <Label Text="¿Qué áreas te interesan más?"
+                           Style="{StaticResource Title3}" />
+                    <Label Text="Puntúa cada área del 1 (poco interés) al 5 (mucho interés)."
+                           Style="{StaticResource Body2}"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+
+                    <ActivityIndicator IsRunning="{Binding IsKcListLoading}"
+                                       IsVisible="{Binding IsKcListLoading}"
+                                       Color="{StaticResource Primary}" />
+
+                    <VerticalStackLayout Spacing="8"
+                                         BindableLayout.ItemsSource="{Binding KcRatings}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="pageModels:KcRatingItem">
+                                <Border Style="{StaticResource CardStyle}">
+                                    <VerticalStackLayout Spacing="8">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding KcKey}"
+                                                   Style="{StaticResource Body2Strong}"
+                                                   LineBreakMode="TailTruncation" />
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding ScoreLabel}"
+                                                   Style="{StaticResource Caption1Strong}"
+                                                   TextColor="{StaticResource Primary}" />
+                                        </Grid>
+                                        <Slider Minimum="1" Maximum="5"
+                                                Value="{Binding Score, Mode=TwoWay}"
+                                                MinimumTrackColor="{StaticResource Primary}" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="24" Color="Transparent" />
+                </VerticalStackLayout>
+
+            </Grid>
+        </ScrollView>
+
+        <!-- ══════════ Footer: Previous / Next buttons + error ══════════ -->
+        <VerticalStackLayout Grid.Row="2"
+                             Padding="{StaticResource LayoutPadding}"
+                             Spacing="8"
+                             BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}">
+
+            <Border IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullOrEmpty}}"
+                    BackgroundColor="#FEE2E2"
+                    Stroke="#DC2626"
+                    StrokeThickness="1"
+                    Padding="10,6">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="6" />
+                </Border.StrokeShape>
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="#991B1B"
+                       Style="{StaticResource Caption1}" />
+            </Border>
+
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                <Button Grid.Column="0"
+                        Text="Atrás"
+                        Command="{Binding PreviousStepCommand}"
+                        IsVisible="{Binding IsFirstStep, Converter={StaticResource InvertBool}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                        Padding="18,10" />
+
+                <Button Grid.Column="1"
+                        Text="{Binding NextButtonText}"
+                        Command="{Binding NextStepCommand}"
+                        IsEnabled="{Binding IsSaving, Converter={StaticResource InvertBool}}" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <!-- Saving overlay -->
+        <Border Grid.RowSpan="3"
+                IsVisible="{Binding IsSaving}"
+                BackgroundColor="#AA000000"
+                StrokeThickness="0">
+            <VerticalStackLayout HorizontalOptions="Center"
+                                 VerticalOptions="Center"
+                                 Spacing="12">
+                <ActivityIndicator IsRunning="{Binding IsSaving}"
+                                   Color="White"
+                                   HeightRequest="48" WidthRequest="48" />
+                <Label Text="Guardando…"
+                       TextColor="White"
+                       Style="{StaticResource Body2}" />
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>
